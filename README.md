@@ -235,17 +235,10 @@ go test ./...
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🤝 Team
-
-- **Om Vikas Hase** - Backend & Go Development
-- **Harshal Kailas Dhotre** - Frontend & Socket.IO
-- **Amit Randhir Holkar** - Database & Charts
-- **Mayur Vilas Ingale** - Frontend & Twilio Integration
-
 ## 📞 Support
 
 For support and questions:
-- Email: support@vulnscraper.com
+- Email: omhase777@gmail.com
 - Issues: [GitHub Issues](https://github.com/your-username/vulnscraper/issues)
 - Documentation: [Project Wiki](https://github.com/your-username/vulnscraper/wiki)
 
