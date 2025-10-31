@@ -1,6 +1,4 @@
-// Dashboard.js
 import React from "react";
-import Header from "./Header";  // Import your header component
 import Metrics from "./Metrics";
 import Charts from "./Charts";
 import RecentVulns from "./RecentVulns";
