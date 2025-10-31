@@ -7,29 +7,97 @@ const Signup = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: "",
+    password: ""
   });
+  const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Send OTP to email
+  const handleSendOTP = async () => {
+    if (!formData.email) {
+      setMessage("Please enter your email to send OTP.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setOtpSent(true);
+        setMessage("OTP sent! Please check your email.");
+      } else {
+        setMessage(data.error || "Failed to send OTP.");
+      }
+    } catch {
+      setMessage("Error sending OTP. Try again.");
+    }
+    setLoading(false);
+  };
+
+  // Verify OTP input
+  const handleVerifyOTP = async () => {
+    if (!otp) {
+      setMessage("Please enter the OTP you received.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email, otp }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setOtpVerified(true);
+        setMessage("OTP verified successfully! Please set your password.");
+      } else {
+        setMessage(data.error || "OTP verification failed.");
+      }
+    } catch {
+      setMessage("Error verifying OTP. Try again.");
+    }
+    setLoading(false);
+  };
+
+  // Final submit for signup after OTP verified
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:5000/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-    const data = await response.json();
-    if (response.ok) {
-      setMessage("Signup successful! Please login.");
-      setTimeout(() => navigate("/login"), 1500);
-    } else {
-      setMessage(data.error || "Signup failed.");
+    if (!otpVerified) {
+      setMessage("Please verify OTP before signing up.");
+      return;
     }
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setMessage("Signup successful! Redirecting to login...");
+        setTimeout(() => navigate("/login"), 2000);
+      } else {
+        setMessage(data.error || "Signup failed.");
+      }
+    } catch {
+      setMessage("Error signing up. Try again.");
+    }
+    setLoading(false);
   };
 
   const handleGoogleSuccess = (credentialResponse) => {
@@ -115,6 +183,8 @@ const Signup = () => {
         }
         .signup-form {
           width: 100%;
+          display: flex;
+          flex-direction: column;
         }
         .signup-form input {
           width: 100%;
@@ -153,10 +223,14 @@ const Signup = () => {
           letter-spacing: 1.3px;
           transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
         }
-        .signup-btn:hover {
+        .signup-btn:hover:enabled {
           background: #21a1f1;
           color: #fff;
           box-shadow: 0 6px 22px rgba(33, 161, 241, 0.7);
+        }
+        .signup-btn:disabled {
+          background: #a6d9fb;
+          cursor: not-allowed;
         }
         .signup-message {
           margin: 12px 0 0 0;
@@ -218,6 +292,7 @@ const Signup = () => {
               required
               autoComplete="name"
               aria-label="Full Name"
+              disabled={otpSent}
             />
             <input
               type="email"
@@ -228,22 +303,69 @@ const Signup = () => {
               required
               autoComplete="email"
               aria-label="Email Address"
+              disabled={otpSent}
             />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              autoComplete="new-password"
-              aria-label="Password"
-              minLength={6}
-              title="Password must be at least 6 characters"
-            />
-            <button type="submit" className="signup-btn" aria-label="Sign up">
-              Sign up
-            </button>
+
+            {!otpSent && (
+              <button
+                type="button"
+                className="signup-btn"
+                onClick={handleSendOTP}
+                disabled={loading || !formData.email || !formData.name}
+                aria-label="Send OTP"
+              >
+                {loading ? "Sending OTP..." : "Send OTP"}
+              </button>
+            )}
+
+            {otpSent && !otpVerified && (
+              <>
+                <input
+                  type="text"
+                  name="otp"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  aria-label="OTP input"
+                  maxLength={6}
+                  style={{ marginBottom: "1rem" }}
+                />
+                <button
+                  type="button"
+                  className="signup-btn"
+                  onClick={handleVerifyOTP}
+                  disabled={loading || otp.length !== 6}
+                  aria-label="Verify OTP"
+                >
+                  {loading ? "Verifying..." : "Verify OTP"}
+                </button>
+              </>
+            )}
+
+            {otpVerified && (
+              <>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  autoComplete="new-password"
+                  aria-label="Password"
+                  minLength={6}
+                  title="Password must be at least 6 characters"
+                />
+                <button
+                  type="submit"
+                  className="signup-btn"
+                  disabled={loading || !formData.password}
+                  aria-label="Sign up"
+                >
+                  {loading ? "Signing up..." : "Sign Up"}
+                </button>
+              </>
+            )}
           </form>
 
           <div className="google-login-button" aria-label="Sign up with Google">
