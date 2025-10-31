@@ -8,14 +8,32 @@ const Header = () => (
       <span style={styles.appName}>VulnScraper</span>
     </div>
     <nav>
-      <Link to="/login" style={{ ...styles.btn, ...styles.loginBtn }}>Login</Link>
-      <Link to="/signup" style={{ ...styles.btn, ...styles.signupBtn }}>Sign Up</Link>
+      <Link
+        to="/login"
+        style={styles.btn}
+        onMouseEnter={e => e.target.style.background = "#e4f0fb"}
+        onMouseLeave={e => e.target.style.background = "transparent"}
+      >
+        Login
+      </Link>
+      <Link
+        to="/signup"
+        style={styles.signupBtn}
+        onMouseEnter={e => e.target.style.background = "#21a1f1"}
+        onMouseLeave={e => e.target.style.background = "#61dafb"}
+      >
+        Sign Up
+      </Link>
     </nav>
   </header>
 );
 
 const FeatureCard = ({ title, desc }) => (
-  <div style={styles.featureCard}>
+  <div
+    style={styles.featureCard}
+    onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 6px 18px #61dafb33")}
+    onMouseLeave={e => (e.currentTarget.style.boxShadow = styles.featureCard.boxShadow)}
+  >
     <h3 style={styles.featureTitle}>{title}</h3>
     <p style={styles.featureDesc}>{desc}</p>
   </div>
@@ -32,7 +50,14 @@ const Homepage = () => {
           <p style={styles.heroSubtitle}>
             Real-time OEM Vulnerability Detection with Automated Reporting
           </p>
-          <Link to="/signup" style={styles.primaryButton}>Get Started</Link>
+          <Link
+            to="/signup"
+            style={styles.primaryButton}
+            onMouseEnter={e => (e.target.style.background = "#21a1f1")}
+            onMouseLeave={e => (e.target.style.background = "#61dafb")}
+          >
+            Get Started
+          </Link>
         </section>
 
         <section style={styles.featuresSection}>
@@ -54,11 +79,11 @@ const Homepage = () => {
               title="Instant Alerts"
               desc="Receive SMS and email notifications for critical vulnerabilities immediately."
             />
-            <FeatureCard 
+            <FeatureCard
               title="Comprehensive API"
               desc="Integrate VulnScraper data with your tooling through RESTful API access."
             />
-            <FeatureCard 
+            <FeatureCard
               title="Scalable Deployment"
               desc="Dockerized for easy setup and deployment in enterprise environments."
             />
@@ -76,8 +101,8 @@ const Homepage = () => {
           <h2 style={styles.sectionTitle}>Stay Connected</h2>
           <p>
             Have questions or want to contribute? Reach out at{" "}
-            <a href="mailto:omhase777@gmail.com" style={styles.link}>omhase777@gmail.com</a> or visit our {" "}
-            <a href="https://github.com/your-username/vulnscraper/issues" target="_blank" rel="noopener noreferrer" style={styles.link}>
+            <a href="mailto:omhase777@gmail.com" style={styles.link}>omhase777@gmail.com</a> or visit our{" "}
+            <a href="https://github.com/OM-HASE/vulnscraper-project/issues" target="_blank" rel="noopener noreferrer" style={styles.link}>
               GitHub Issues
             </a>.
           </p>
@@ -96,12 +121,12 @@ const Homepage = () => {
 const styles = {
   pageContainer: {
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    color: "#1c1c1c",
-    backgroundColor: "#fefefe",
-    minHeight: "100vh",
+    color: "#282c34",
+    backgroundColor: "#f5f7fa",
+    minHeight: "100vh"
   },
   header: {
-    backgroundColor: "#24292f",
+    backgroundColor: "#282c34",
     color: "#fff",
     display: "flex",
     justifyContent: "space-between",
@@ -110,7 +135,7 @@ const styles = {
     position: "sticky",
     top: 0,
     zIndex: 1000,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+    boxShadow: "0 2px 8px #61dafb22"
   },
   logoContainer: {
     display: "flex",
@@ -118,141 +143,150 @@ const styles = {
   },
   logoIcon: {
     fontSize: "1.8rem",
-    color: "#28a745",
+    color: "#61dafb",
     marginRight: "0.5rem"
   },
   appName: {
     fontSize: "1.5rem",
     fontWeight: "700"
   },
-  nav: {},
   btn: {
-    padding: "0.5rem 1.25rem",
+    padding: "0.5rem 1rem",
     borderRadius: "4px",
     fontWeight: "600",
     textDecoration: "none",
     marginLeft: "1rem",
-    transition: "background-color 0.3s ease",
-    display: "inline-block",
-  },
-  loginBtn: {
-    color: "#28a745",
-    border: "2px solid #28a745",
+    color: "#61dafb",
+    border: "2px solid #61dafb",
     backgroundColor: "transparent",
+    transition: "background 0.3s",
+    display: "inline-block",
   },
   signupBtn: {
     color: "#fff",
-    backgroundColor: "#28a745",
-    border: "2px solid #28a745",
+    backgroundColor: "#61dafb",
+    border: "2px solid #61dafb",
+    padding: "0.5rem 1rem",
+    borderRadius: "4px",
+    fontWeight: "600",
+    textDecoration: "none",
+    marginLeft: "1rem",
+    transition: "background 0.3s",
+    display: "inline-block",
   },
-
   mainContent: {
-    maxWidth: "1024px",
+    maxWidth: "1080px",
     margin: "3rem auto",
     padding: "0 1rem"
   },
   heroSection: {
     textAlign: "center",
-    padding: "4rem 1rem",
-    backgroundColor: "#e9f5ec",
-    borderRadius: "10px",
-    boxShadow: "0 4px 12px rgb(40 167 69 / 0.2)",
+    padding: "4rem 1rem 3rem 1rem",
+    backgroundColor: "#e4f0fb",
+    borderRadius: "14px",
+    boxShadow: "0 2px 15px #61dafb22",
+    marginBottom: "4rem",
   },
   heroTitle: {
     fontSize: "3rem",
     fontWeight: "700",
     marginBottom: "1rem",
-    color: "#19692c"
+    color: "#282c34",
+    letterSpacing: "1px"
   },
   heroSubtitle: {
-    fontSize: "1.3rem",
+    fontSize: "1.25rem",
     marginBottom: "2rem",
-    color: "#3a6043",
-    maxWidth: "600px",
+    color: "#426991",
+    maxWidth: "540px",
     marginLeft: "auto",
     marginRight: "auto",
+    lineHeight: "1.5",
   },
   primaryButton: {
-    backgroundColor: "#28a745",
-    color: "#fff",
-    padding: "0.75rem 2rem",
+    backgroundColor: "#61dafb",
+    color: "#282c34",
+    padding: "0.7rem 2rem",
     fontSize: "1.1rem",
     fontWeight: "bold",
     borderRadius: "6px",
     textDecoration: "none",
-    boxShadow: "0 5px 15px #237a26",
-    transition: "background-color 0.3s ease",
+    boxShadow: "0 5px 15px #61dafb55",
+    transition: "background 0.3s",
+    display: "inline-block",
+    border: "2px solid #61dafb",
   },
-  primaryButtonHover: {
-    backgroundColor: "#1c541a"
-  },
-
   featuresSection: {
-    marginTop: "5rem"
+    marginTop: "3.5rem"
   },
   sectionTitle: {
     fontSize: "2rem",
-    borderBottom: "3px solid #28a745",
+    borderBottom: "3px solid #61dafb",
     display: "inline-block",
-    paddingBottom: "0.25rem",
+    paddingBottom: "0.23rem",
     marginBottom: "2rem",
+    fontWeight: "700",
+    color: "#282c34"
   },
   featuresGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
-    gap: "2rem"
+    gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
+    gap: "2.2rem",
   },
   featureCard: {
-    backgroundColor: "white",
-    boxShadow: "0 2px 14px rgb(0 0 0 / 0.05)",
-    padding: "2rem",
-    borderRadius: "8px",
-    transition: "transform 0.2s ease",
+    backgroundColor: "#fff",
+    boxShadow: "0 2px 16px #61dafb11",
+    padding: "2rem 1.3rem 1.5rem",
+    borderRadius: "10px",
+    transition: "box-shadow 0.2s",
     cursor: "default",
+    minHeight: "170px",
   },
   featureTitle: {
-    fontSize: "1.3rem",
-    color: "#19692c",
-    marginBottom: "0.75rem",
-    fontWeight: "700"
+    fontSize: "1.15rem",
+    color: "#2778ac",
+    fontWeight: "700",
+    marginBottom: "0.6rem"
   },
   featureDesc: {
     fontSize: "1rem",
-    color: "#3a3a3a",
+    color: "#282c34",
+    lineHeight: "1.55",
   },
-
   aboutSection: {
-    marginTop: "6rem",
-    backgroundColor: "#f4fdf6",
-    padding: "2.5rem",
-    borderRadius: "8px"
+    marginTop: "5rem",
+    backgroundColor: "#e4f0fb",
+    padding: "2.3rem",
+    borderRadius: "10px"
   },
   aboutText: {
-    fontSize: "1.1rem",
+    fontSize: "1.07rem",
     maxWidth: "700px",
     margin: "0 auto",
-    color: "#2d2d2d",
+    color: "#2778ac",
+    fontWeight: "500",
+    lineHeight: "1.55"
   },
-
   contactSection: {
     marginTop: "4rem",
     textAlign: "center",
-    color: "#555",
-    fontSize: "1.05rem",
+    color: "#282c34",
+    fontSize: "1.07rem",
+    marginBottom: "3rem"
   },
-  
   link: {
-    color: "#28a745",
+    color: "#61dafb",
     textDecoration: "underline",
+    fontWeight: "bold"
   },
-
   footer: {
-    marginTop: "6rem",
-    padding: "1.5rem",
-    fontSize: "0.9rem",
+    marginTop: "4rem",
+    padding: "1.2rem",
+    fontSize: "0.93rem",
     textAlign: "center",
     color: "#888",
-    borderTop: "1px solid #ddd",
+    borderTop: "1px solid #dde5ef",
+    background: "#f5f7fa"
   }
 };
 

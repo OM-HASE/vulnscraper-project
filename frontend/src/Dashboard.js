@@ -8,8 +8,6 @@ import RecentVulns from "./RecentVulns";
 export default function Dashboard({ onLogout }) {
   return (
     <div>
-      {/* Render the header and pass onLogout for logout handling */}
-      <Header onLogout={onLogout} />
 
       {/* Dashboard main content */}
       <div className="alerts-section" id="alertsSection">

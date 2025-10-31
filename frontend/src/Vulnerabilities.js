@@ -60,8 +60,14 @@ export default function Vulnerabilities() {
         body, html {
           margin: 0;
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          background: #f5f7fa;
-          color: #333;
+          background-color: #121418; /* dark background */
+          color: #cbd3da;           /* dark text */
+          transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        body.light-theme, body.light-theme html {
+          background-color: #f5f7fa; /* light background */
+          color: #282c34;            /* light text */
         }
 
         .header {
@@ -72,6 +78,13 @@ export default function Vulnerabilities() {
           background: #282c34;
           color: #ffffff;
           box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+          transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        body.light-theme .header {
+          background: #ffffff;
+          color: #282c34;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .page-title {
@@ -84,6 +97,11 @@ export default function Vulnerabilities() {
           font-size: 0.9rem;
           margin-right: 1.5rem;
           color: #9da5b4;
+          transition: color 0.4s ease;
+        }
+
+        body.light-theme .current-time {
+          color: #666666;
         }
 
         .user-profile {
@@ -92,12 +110,22 @@ export default function Vulnerabilities() {
           font-weight: 600;
           font-size: 1rem;
           color: #ffffff;
+          transition: color 0.4s ease;
+        }
+
+        body.light-theme .user-profile {
+          color: #444444;
         }
 
         .user-profile i {
           font-size: 1.5rem;
           margin-right: 0.5rem;
           color: #61dafb;
+          transition: color 0.4s ease;
+        }
+
+        body.light-theme .user-profile i {
+          color: #007acc;
         }
 
         .filters-section {
@@ -109,12 +137,18 @@ export default function Vulnerabilities() {
         .search-bar {
           display: flex;
           align-items: center;
-          background: #fff;
+          background: #282c34;
           padding: 0.4rem 0.75rem;
           border-radius: 8px;
           box-shadow: 0 1px 4px rgba(0,0,0,0.1);
           max-width: 500px;
           margin-bottom: 1rem;
+          border: 1.5px solid #444;
+          transition: background-color 0.4s ease, border-color 0.3s ease;
+        }
+
+        body.light-theme .search-bar {
+          background: #fff;
           border: 1.5px solid #ddd;
         }
 
@@ -122,6 +156,11 @@ export default function Vulnerabilities() {
           color: #61dafb;
           font-size: 1.1rem;
           margin-right: 0.5rem;
+          transition: color 0.4s ease;
+        }
+
+        body.light-theme .search-bar i {
+          color: #007acc;
         }
 
         .search-bar input {
@@ -131,7 +170,12 @@ export default function Vulnerabilities() {
           font-size: 1rem;
           padding: 0.35rem 0;
           background: transparent;
-          color: #333;
+          color: #cbd3da;
+          transition: color 0.4s ease;
+        }
+
+        body.light-theme .search-bar input {
+          color: #282c34;
         }
 
         .filters-row {
@@ -143,13 +187,20 @@ export default function Vulnerabilities() {
 
         .form-control {
           padding: 8px 12px;
-          border: 1.5px solid #ddd;
+          border: 1.5px solid #444;
           border-radius: 6px;
           font-size: 1rem;
           min-width: 150px;
-          transition: border-color 0.3s ease;
-          background-color: #fff;
+          transition: border-color 0.3s ease, background-color 0.4s ease, color 0.4s ease;
+          background-color: #282c34;
+          color: #cbd3da;
           cursor: pointer;
+        }
+
+        body.light-theme .form-control {
+          border: 1.5px solid #ddd;
+          background-color: #fff;
+          color: #282c34;
         }
 
         .form-control:focus {
@@ -182,16 +233,22 @@ export default function Vulnerabilities() {
           max-width: 1200px;
           margin: 0 auto 2rem auto;
           padding: 0 1rem;
-          overflow-x: auto; /* enable horizontal scrolling */
-          -webkit-overflow-scrolling: touch; /* smooth scrolling on touch devices */
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
         }
 
         .card {
-          background: #ffffff;
+          background: #1e222a;
           border-radius: 10px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.05);
           padding: 1rem;
           overflow-x: auto;
+          transition: background-color 0.4s ease;
+        }
+
+        body.light-theme .card {
+          background: #fff;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
         .card__body {
@@ -200,7 +257,7 @@ export default function Vulnerabilities() {
 
         .table-container {
           width: 100%;
-          min-width: 900px; /* minimum width for full table visibility */
+          min-width: 900px;
           overflow-x: auto;
         }
 
@@ -208,28 +265,46 @@ export default function Vulnerabilities() {
           width: 100%;
           border-collapse: collapse;
           font-size: 0.9rem;
-          min-width: 900px; /* minimum width for table */
+          min-width: 900px;
         }
 
-        table.vulnerabilities-table th, table.vulnerabilities-table td {
+        table.vulnerabilities-table th,
+        table.vulnerabilities-table td {
           padding: 0.8rem 0.7rem;
-          border-bottom: 1px solid #eee;
-          color: #333;
+          border-bottom: 1px solid #444;
+          color: #cbd3da;
           text-align: left;
           vertical-align: middle;
           white-space: nowrap;
+          transition: color 0.4s ease, border-color 0.4s ease;
+        }
+
+        body.light-theme table.vulnerabilities-table th,
+        body.light-theme table.vulnerabilities-table td {
+          color: #282c34;
+          border-bottom: 1px solid #ddd;
         }
 
         table.vulnerabilities-table th {
-          background-color: #e4f0fb;
+          background-color: #22262f;
           font-weight: 700;
-          color: #282c34;
           user-select: none;
+          transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        body.light-theme table.vulnerabilities-table th {
+          background-color: #e4f0fb;
+          color: #282c34;
         }
 
         table.vulnerabilities-table tbody tr:hover {
-          background-color: #f0f6fc;
+          background-color: #3a3f4b;
           cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+
+        body.light-theme table.vulnerabilities-table tbody tr:hover {
+          background-color: #d0e8ff;
         }
 
         .action-btn {
@@ -251,30 +326,26 @@ export default function Vulnerabilities() {
           display: flex;
           justify-content: space-between;
           font-size: 0.9rem;
+          color: #999;
+          transition: color 0.4s ease;
+        }
+
+        body.light-theme .table-footer {
           color: #555;
         }
 
         .table-info span {
           font-weight: 700;
+          color: #61dafb;
+          transition: color 0.4s ease;
+        }
+
+        body.light-theme .table-info span {
           color: #282c34;
         }
       `}</style>
 
       <div>
-        <header className="header">
-          <div className="header-left">
-            <h1 className="page-title">Vulnerabilities</h1>
-          </div>
-          <div className="header-right">
-            <div className="current-time">
-              {new Date().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}
-            </div>
-            <div className="user-profile">
-              <i className="fas fa-user-circle"></i>
-              <span>Admin</span>
-            </div>
-          </div>
-        </header>
 
         <div className="filters-section">
           <div className="search-bar">
@@ -334,7 +405,9 @@ export default function Vulnerabilities() {
                 <table className="vulnerabilities-table">
                   <thead>
                     <tr>
-                      <th><input type="checkbox" /></th>
+                      <th>
+                        <input type="checkbox" />
+                      </th>
                       <th>CVE</th>
                       <th>Title</th>
                       <th>Vendor</th>
@@ -346,16 +419,22 @@ export default function Vulnerabilities() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredVulnerabilities.map(vuln => (
+                    {filteredVulnerabilities.map((vuln) => (
                       <tr key={vuln._id}>
-                        <td><input type="checkbox" /></td>
+                        <td>
+                          <input type="checkbox" />
+                        </td>
                         <td>{vuln.cve}</td>
                         <td>{vuln.title}</td>
-                        <td>{vuln.vendor || 'N/A'}</td>
-                        <td>{vuln.severity || 'N/A'}</td>
-                        <td>{vuln.cvss || 'N/A'}</td>
+                        <td>{vuln.vendor || "N/A"}</td>
+                        <td>{vuln.severity || "N/A"}</td>
+                        <td>{vuln.cvss || "N/A"}</td>
                         <td>{vuln.status}</td>
-                        <td>{vuln.published ? new Date(vuln.published).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                          {vuln.published
+                            ? new Date(vuln.published).toLocaleDateString()
+                            : "N/A"}
+                        </td>
                         <td>
                           <button
                             className="action-btn"

@@ -30,6 +30,7 @@ function App() {
     setToken(newToken);
   };
 
+  // This function will be passed everywhere as onLogout
   const handleLogout = () => {
     localStorage.removeItem('token');
     setToken(null);
@@ -38,19 +39,15 @@ function App() {
 
   return (
     <Routes>
-      {/* Public homepage as landing page */}
       <Route path="/" element={<Homepage />} />
-
-      {/* Public auth routes */}
       <Route path="/login" element={<Login onLogin={handleLogin} />} />
       <Route path="/signup" element={<Signup />} />
 
-      {/* Protected routes moved under /dashboard */}
       <Route
-        path="/dashboard"
+        path="/dashboard/*"
         element={
           <PrivateRoute>
-            <DashboardLayout />
+            <DashboardLayout onLogout={handleLogout} />
           </PrivateRoute>
         }
       >

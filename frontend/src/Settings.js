@@ -11,8 +11,14 @@ export default function Settings() {
         body, html {
           margin: 0;
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          background: #f5f7fa;
-          color: #333;
+          background: #121418;  /* default dark bg */
+          color: #cbd3da;       /* default dark text */
+          transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        body.light-theme, body.light-theme html {
+          background: #f5f7fa;  /* light bg */
+          color: #333333;       /* light text */
         }
 
         .header {
@@ -20,9 +26,16 @@ export default function Settings() {
           justify-content: space-between;
           align-items: center;
           padding: 1rem 2rem;
-          background: #282c34;
+          background: #282c34;  /* dark header bg */
           color: #ffffff;
           box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+          transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        body.light-theme .header {
+          background: #ffffff;  /* light header bg */
+          color: #282c34;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .page-title {
@@ -35,6 +48,11 @@ export default function Settings() {
           font-size: 0.9rem;
           margin-right: 1.5rem;
           color: #9da5b4;
+          transition: color 0.4s ease;
+        }
+
+        body.light-theme .current-time {
+          color: #666666;
         }
 
         .user-profile {
@@ -43,12 +61,22 @@ export default function Settings() {
           font-weight: 600;
           font-size: 1rem;
           color: #ffffff;
+          transition: color 0.4s ease;
+        }
+
+        body.light-theme .user-profile {
+          color: #444444;
         }
 
         .user-profile i {
           font-size: 1.5rem;
           margin-right: 0.5rem;
           color: #61dafb;
+          transition: color 0.4s ease;
+        }
+
+        body.light-theme .user-profile i {
+          color: #007acc;
         }
 
         .settings-grid {
@@ -61,10 +89,15 @@ export default function Settings() {
         }
 
         .card {
-          background: #ffffff;
+          background: #1e222a; /* dark card bg */
           border-radius: 10px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.4s ease;
+        }
+
+        body.light-theme .card {
+          background: #ffffff; /* light card bg */
+          box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
         .card:hover {
@@ -75,13 +108,23 @@ export default function Settings() {
         .card__header {
           border-bottom: 2px solid #61dafb;
           padding: 1rem 1.5rem;
-          background-color: #e4f0fb;
+          background-color: #22262f;  /* dark header bg */
           border-radius: 10px 10px 0 0;
+          transition: background-color 0.4s ease;
+        }
+
+        body.light-theme .card__header {
+          background-color: #e4f0fb; /* light header bg */
         }
 
         .card__header h3 {
           margin: 0;
           font-weight: 700;
+          color: #61dafb;
+          transition: color 0.4s ease;
+        }
+
+        body.light-theme .card__header h3 {
           color: #282c34;
         }
 
@@ -97,7 +140,12 @@ export default function Settings() {
           display: block;
           font-weight: 600;
           margin-bottom: 0.4rem;
-          color: #444;
+          color: #a0a0a0;
+          transition: color 0.4s ease;
+        }
+
+        body.light-theme .form-label {
+          color: #444444;
         }
 
         .toggle {
@@ -120,9 +168,13 @@ export default function Settings() {
           left: 0;
           right: 0;
           bottom: 0;
-          background-color: #ccc;
+          background-color: #555;
           border-radius: 26px;
           transition: 0.4s;
+        }
+
+        input:checked + .slider {
+          background-color: #61dafb;
         }
 
         .slider:before {
@@ -137,10 +189,6 @@ export default function Settings() {
           transition: 0.4s;
         }
 
-        input:checked + .slider {
-          background-color: #61dafb;
-        }
-
         input:checked + .slider:before {
           transform: translateX(22px);
         }
@@ -148,17 +196,26 @@ export default function Settings() {
         .form-control {
           width: 100%;
           padding: 8px 12px;
-          border: 1.5px solid #ddd;
+          border: 1.5px solid #555;
           border-radius: 6px;
           font-size: 1rem;
-          background-color: #fff;
-          transition: border-color 0.3s ease;
+          background-color: #2a2e39;
+          color: #cbd3da;
+          transition: border-color 0.3s ease, background-color 0.4s ease, color 0.4s ease;
         }
 
         .form-control:focus {
           outline: none;
           border-color: #61dafb;
           box-shadow: 0 0 5px rgba(97, 218, 251, 0.5);
+          background-color: #2a2e39;
+          color: #f0f0f0;
+        }
+
+        body.light-theme .form-control {
+          border: 1.5px solid #ddd;
+          background-color: #fff;
+          color: #282c34;
         }
 
         .checkbox-group label {
@@ -168,6 +225,11 @@ export default function Settings() {
           cursor: pointer;
           user-select: none;
           font-size: 0.95rem;
+          color: #999;
+          transition: color 0.4s ease;
+        }
+
+        body.light-theme .checkbox-group label {
           color: #555;
         }
 
@@ -182,6 +244,13 @@ export default function Settings() {
           padding: 0.5rem 0;
           font-weight: 600;
           font-size: 0.9rem;
+          border-bottom: 1px solid #444;
+          transition: border-color 0.4s ease;
+          color: #ddd;
+        }
+
+        body.light-theme .status-item {
+          color: #444;
           border-bottom: 1px solid #eee;
         }
 
@@ -197,29 +266,22 @@ export default function Settings() {
           color: #fff;
           min-width: 70px;
           text-align: center;
+          background-color: #4caf50;
+          transition: background-color 0.4s ease;
         }
 
-        .status--success {
-          background-color: #4caf50;
+        body.light-theme .status {
+          background-color: #388e3c;
+          color: #fff;
         }
       `}</style>
 
       <div>
-        <header className="header">
-          <div className="header-left">
-            <h1 className="page-title">Settings</h1>
-          </div>
-          <div className="header-right">
-            <div className="current-time">{new Date().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</div>
-            <div className="user-profile">
-              <i className="fas fa-user-circle"></i>
-              <span>Admin</span>
-            </div>
-          </div>
-        </header>
         <div className="settings-grid">
           <div className="card">
-            <div className="card__header"><h3>Alert Configuration</h3></div>
+            <div className="card__header">
+              <h3>Alert Configuration</h3>
+            </div>
             <div className="card__body">
               <div className="form-group">
                 <label className="form-label">Email Notifications</label>
@@ -244,8 +306,11 @@ export default function Settings() {
               </div>
             </div>
           </div>
+
           <div className="card">
-            <div className="card__header"><h3>Scraper Settings</h3></div>
+            <div className="card__header">
+              <h3>Scraper Settings</h3>
+            </div>
             <div className="card__body">
               <div className="form-group">
                 <label className="form-label">Scrape Frequency</label>
@@ -276,13 +341,28 @@ export default function Settings() {
               </div>
             </div>
           </div>
+
           <div className="card">
-            <div className="card__header"><h3>System Status</h3></div>
+            <div className="card__header">
+              <h3>System Status</h3>
+            </div>
             <div className="card__body">
-              <div className="status-item"><span>Database Connection</span><span className="status status--success">Online</span></div>
-              <div className="status-item"><span>Scraper Service</span><span className="status status--success">Running</span></div>
-              <div className="status-item"><span>API Service</span><span className="status status--success">Healthy</span></div>
-              <div className="status-item"><span>Last Scan</span><span>2 minutes ago</span></div>
+              <div className="status-item">
+                <span>Database Connection</span>
+                <span className="status status--success">Online</span>
+              </div>
+              <div className="status-item">
+                <span>Scraper Service</span>
+                <span className="status status--success">Running</span>
+              </div>
+              <div className="status-item">
+                <span>API Service</span>
+                <span className="status status--success">Healthy</span>
+              </div>
+              <div className="status-item">
+                <span>Last Scan</span>
+                <span>2 minutes ago</span>
+              </div>
             </div>
           </div>
         </div>
