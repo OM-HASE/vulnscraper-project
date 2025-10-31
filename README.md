@@ -239,7 +239,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For support and questions:
 - Email: omhase777@gmail.com
-- Issues: [GitHub Issues](https://github.com/your-username/vulnscraper/issues)
+- Issues: [GitHub Issues](https://github.com/OM-HASE/vulnscraper-project/issues)
 - Documentation: [Project Wiki](https://github.com/your-username/vulnscraper/wiki)
 
 ---
