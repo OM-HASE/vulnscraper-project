@@ -1743,3 +1743,261 @@ input:checked + .slider:before {
   font-weight: bold;
   color: #22334c;
 }
+
+:root {
+  --color-primary: #61dafb;
+  --color-bg-light: #ffffff;
+  --color-bg-dark: #23282f;
+  --color-text-light: #282c34;
+  --color-text-dark: #cbd3da;
+  --color-danger: #e53e3e;
+  --color-warning: #f6ad55;
+  --color-success: #38a169;
+  --card-radius: 16px;
+  --card-shadow: 0 4px 24px #61dafb16;
+  --card-padding: 2rem 1.3rem 1rem 1.3rem;
+  --accent-top-bar: linear-gradient(to right, #61dafb, #21a1f1);
+}
+
+/* Theme adaptation */
+body.light-theme {
+  --dashboard-card-bg: var(--color-bg-light);
+  --dashboard-card-text: var(--color-text-light);
+  --dashboard-card-label: #555;
+  --dashboard-card-shadow: var(--card-shadow);
+  --chart-title: #282c34;
+}
+body:not(.light-theme) {
+  --dashboard-card-bg: var(--color-bg-dark);
+  --dashboard-card-text: var(--color-primary);
+  --dashboard-card-label: #b2c7d2;
+  --dashboard-card-shadow: var(--card-shadow);
+  --chart-title: #61dafb;
+}
+
+.dashboard-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.dashboard-metrics-row {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+@media (max-width: 900px) {
+  .dashboard-metrics-row {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+.metric-card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #61dafb28;
+  padding: 1.25rem 2rem;
+  min-width: 200px;
+  flex: 1 1 180px;
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+body:not(.light-theme) .metric-card {
+  background-color: #23282f;
+  color: #cbd3da;
+}
+.metric-card .metric-icon {
+  font-size: 2rem;
+  color: #61dafb;
+}
+.metric-card.critical .metric-icon { color: #e53e3e; }
+.metric-card.active .metric-icon   { color: #f6ad55; }
+.metric-card.resolved .metric-icon { color: #38a169; }
+
+.metric-content {
+  display: flex;
+  flex-direction: column;
+}
+.metric-number {
+  font-size: 2.1rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #282c34;
+}
+body:not(.light-theme) .metric-number {
+  color: #61dafb;
+}
+.metric-label {
+  font-size: 1rem;
+  color: #555;
+  font-weight: 600;
+  margin-top: 0.18rem;
+}
+body:not(.light-theme) .metric-label {
+  color: #a0a8ad;
+}
+
+.dashboard-charts-row {
+  display: flex;
+  gap: 2rem;
+}
+@media (max-width: 900px) {
+  .dashboard-charts-row {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+.chart-card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #61dafb28;
+  flex: 1 1 350px;
+  padding: 1.5rem;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+body:not(.light-theme) .chart-card {
+  background-color: #23282f;
+  color: #cbd3da;
+}
+.chart-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 1.1rem;
+  color: #282c34;
+}
+body:not(.light-theme) .chart-title {
+  color: #61dafb;
+}
+.chart-plot-area {
+  min-height: 320px;
+  height: 320px;
+  position: relative;
+}
+
+/* Make charts fill their containers */
+.doughnut-area canvas,
+.line-area canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 300px;
+}
+.loading {
+  padding: 2rem 0;
+  text-align: center;
+  color: #555;
+}
+
+/* Define defaults for light mode */
+body, body.light-theme {
+  --card-bg: #fff;
+  --card-header-bg: #f4f6fa;
+  --card-header-text: #252933;
+  --table-header-bg: #f4f6fa;
+  --table-header-text: #264357;
+  --table-row-bg: #fff;
+  --table-row-hover: #e6f4fa;
+  --table-text: #23282f;
+  --pill-medium: #2ecc40;
+  --pill-high: #ffb347;
+  --pill-critical: #6f42c1;
+  --pill-unknown: #ff3333;
+  --pill-low: #ffe066;
+  --pill-open: #61dafb;
+  --pill-patched: #2ecc40;
+}
+
+/* Dark mode overrides */
+body.dark-theme {
+  --card-bg: #20232a;
+  --card-header-bg: #23272f;
+  --card-header-text: #dce3ea;
+  --table-header-bg: #23272f;
+  --table-header-text: #81c2ed;
+  --table-row-bg: #23282f;
+  --table-row-hover: #273145;
+  --table-text: #cdd2e0;
+  --pill-medium: #61e080;
+  --pill-high: #ffc164;
+  --pill-critical: #bc63e5;
+  --pill-unknown: #ff685c;
+  --pill-low: #fcefae;
+  --pill-open: #38bdf8;
+  --pill-patched: #56e46c;
+}
+
+/* Card styles */
+.card {
+  background: var(--card-bg);
+  margin: 24px 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 7px rgba(0,0,0,0.05);
+  color: var(--table-text);
+}
+.card__header {
+  background: var(--card-header-bg);
+  color: var(--card-header-text);
+  padding: 16px 24px;
+  border-radius: 10px 10px 0 0;
+  font-weight: bold;
+}
+
+.card__body {
+  padding: 16px 24px;
+}
+
+/* Table styles */
+.vulnerabilities-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.vulnerabilities-table th {
+  background: var(--table-header-bg);
+  color: var(--table-header-text);
+  padding: 10px 8px;
+}
+.vulnerabilities-table td {
+  background: var(--table-row-bg);
+  color: var(--table-text);
+  padding: 8px;
+  border-top: 1px solid #dae4ef20;
+}
+.vulnerabilities-table tr:hover td {
+  background: var(--table-row-hover);
+}
+
+/* Pill styles */
+.pill {
+  display: inline-block;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  padding: 2px 12px;
+  color: #23282f;
+  font-weight: 500;
+  background: #eee;
+}
+.pill.medium { background: var(--pill-medium); color: #fff; }
+.pill.high { background: var(--pill-high); color: #23282f;}
+.pill.critical { background: var(--pill-critical); color: #fff;}
+.pill.unknown { background: var(--pill-unknown); color: #fff;}
+.pill.low { background: var(--pill-low); color: #23282f;}
+.pill.open { background: var(--pill-open); color: #23282f;}
+.pill.patched { background: var(--pill-patched); color: #23282f;}
+/* Add more pill statuses if needed */
+
+/* Action button */
+.action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 1.05rem;
+  margin: 0 2px;
+}
+.action-btn:hover {
+  color: #1fb8cd;
+}

@@ -1,69 +1,65 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "./dashboard.css";
 
 export default function Metrics() {
   const [metrics, setMetrics] = useState({
     totalVulns: 0,
     criticalCount: 0,
     activeThreats: 0,
-    resolvedCount: 0
+    resolvedCount: 0,
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
-        const response = await axios.get('/api/vulnerabilities/metrics');
-        setMetrics(response.data);
-      } catch (error) {
-        console.error('Error fetching metrics:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMetrics();
+    axios.get("/api/vulnerabilities/metrics")
+      .then(res => setMetrics(res.data))
+      .catch(err => console.error("Error fetching metrics:", err))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
-    return <div className="metrics-grid">Loading metrics...</div>;
-  }
+  const displayCount = (count) =>
+    count === undefined || count === null ? "0" : count.toLocaleString();
 
-  return (
-    <div className="metrics-grid">
+  return loading ? (
+    <div className="dashboard-metrics-row">
+      <div className="loading">Loading metrics...</div>
+    </div>
+  ) : (
+    <div className="dashboard-metrics-row">
       <div className="metric-card">
-        <div className="metric-icon">
+        <span className="metric-icon">
           <i className="fas fa-shield-alt"></i>
-        </div>
+        </span>
         <div className="metric-content">
-          <div className="metric-number" id="totalVulns">{metrics.totalVulns}</div>
+          <div className="metric-number" id="totalVulns">{displayCount(metrics.totalVulns)}</div>
           <div className="metric-label">Total Vulnerabilities</div>
         </div>
       </div>
       <div className="metric-card critical">
-        <div className="metric-icon">
+        <span className="metric-icon">
           <i className="fas fa-exclamation-circle"></i>
-        </div>
+        </span>
         <div className="metric-content">
-          <div className="metric-number" id="criticalCount">{metrics.criticalCount}</div>
-          <div className="metric-label">Critical/High</div>
+          <div className="metric-number" id="criticalCount">{displayCount(metrics.criticalCount)}</div>
+          <div className="metric-label">Critical / High</div>
         </div>
       </div>
       <div className="metric-card active">
-        <div className="metric-icon">
+        <span className="metric-icon">
           <i className="fas fa-fire"></i>
-        </div>
+        </span>
         <div className="metric-content">
-          <div className="metric-number" id="activeThreats">{metrics.activeThreats}</div>
+          <div className="metric-number" id="activeThreats">{displayCount(metrics.activeThreats)}</div>
           <div className="metric-label">Active Threats</div>
         </div>
       </div>
       <div className="metric-card resolved">
-        <div className="metric-icon">
+        <span className="metric-icon">
           <i className="fas fa-check-circle"></i>
-        </div>
+        </span>
         <div className="metric-content">
-          <div className="metric-number" id="resolvedCount">{metrics.resolvedCount}</div>
+          <div className="metric-number" id="resolvedCount">{displayCount(metrics.resolvedCount)}</div>
           <div className="metric-label">Resolved</div>
         </div>
       </div>
