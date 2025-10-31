@@ -20,7 +20,9 @@ export default function Header({ onLogout, pageName }) {
 
   return (
     <>
+    
       <style>{`
+      
         * { box-sizing: border-box; }
         body, html {
           margin: 0;
