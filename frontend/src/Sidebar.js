@@ -16,19 +16,31 @@ export default function Sidebar() {
         </button>
       </div>
       <div className="nav-menu">
-        <Link to="/dashboard" className={`nav-item${location.pathname === "/dashboard" ? " active" : ""}`}>
+        <Link
+          to="/dashboard"
+          className={`nav-item${location.pathname === "/dashboard" ? " active" : ""}`}
+        >
           <i className="fas fa-tachometer-alt"></i>
           <span>Dashboard</span>
         </Link>
-        <Link to="/vulnerabilities" className={`nav-item${location.pathname === "/vulnerabilities" ? " active" : ""}`}>
+        <Link
+          to="/dashboard/vulnerabilities"
+          className={`nav-item${location.pathname === "/dashboard/vulnerabilities" ? " active" : ""}`}
+        >
           <i className="fas fa-bug"></i>
           <span>Vulnerabilities</span>
         </Link>
-        <Link to="/settings" className={`nav-item${location.pathname === "/settings" ? " active" : ""}`}>
+        <Link
+          to="/dashboard/settings"
+          className={`nav-item${location.pathname === "/dashboard/settings" ? " active" : ""}`}
+        >
           <i className="fas fa-cog"></i>
           <span>Settings</span>
         </Link>
-        <Link to="/reports" className={`nav-item${location.pathname === "/reports" ? " active" : ""}`}>
+        <Link
+          to="/dashboard/reports"
+          className={`nav-item${location.pathname === "/dashboard/reports" ? " active" : ""}`}
+        >
           <i className="fas fa-chart-bar"></i>
           <span>Reports</span>
         </Link>
