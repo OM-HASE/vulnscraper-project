@@ -39,10 +39,8 @@ const FeatureCard = ({ title, desc }) => (
   </div>
 );
 
-// Unified Contributors Section: combines static + GitHub contributors
+// Unified Contributors Section: pulls from GitHub only for final version
 const Contributors = () => {
-  
-
   const [gitHubContributors, setGitHubContributors] = useState([]);
 
   useEffect(() => {
@@ -50,14 +48,11 @@ const Contributors = () => {
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
-          // map GitHub contributors into consistent format
           const ghContribs = data.map(user => ({
             id: user.id,
             name: user.login,
-            role: null,
             photo: user.avatar_url,
             profileUrl: user.html_url,
-            contributions: user.contributions,
           }));
           setGitHubContributors(ghContribs);
         }
@@ -65,33 +60,16 @@ const Contributors = () => {
       .catch(err => console.error("Failed to fetch contributors", err));
   }, []);
 
-  // Merge static team + GitHub contributors
-  // Avoid duplicating if someone's in both sets by name or id
-  // Here just concatenate for simplicity
-  const allContributors = [...gitHubContributors];
-
   return (
     <section style={styles.contributorsSection}>
       <h2 style={styles.sectionTitle}>Contributors</h2>
       <div style={styles.contributorsGrid}>
-        {allContributors.map(member => (
+        {gitHubContributors.map(member => (
           <div key={member.id} style={styles.contributorCard}>
-            {member.profileUrl ? (
-              <a href={member.profileUrl} target="_blank" rel="noopener noreferrer" style={{textDecoration:"none"}}>
-                <img src={member.photo} alt={member.name} style={styles.contributorPhoto} />
-                <h4 style={styles.contributorName}>{member.name}</h4>
-                <p style={styles.contributorRole}>
-                  {member.role ? member.role : ""}
-                  {member.contributions ? ` - ${member.contributions} contributions` : ""}
-                </p>
-              </a>
-            ) : (
-              <>
-                <img src={member.photo} alt={member.name} style={styles.contributorPhoto} />
-                <h4 style={styles.contributorName}>{member.name}</h4>
-                <p style={styles.contributorRole}>{member.role}</p>
-              </>
-            )}
+            <a href={member.profileUrl} target="_blank" rel="noopener noreferrer" style={{textDecoration:"none"}}>
+              <img src={member.photo} alt={member.name} style={styles.contributorPhoto} />
+              <h4 style={styles.contributorName}>{member.name}</h4>
+            </a>
           </div>
         ))}
       </div>
@@ -153,11 +131,10 @@ const Homepage = () => {
         <section style={styles.aboutSection}>
           <h2 style={styles.sectionTitle}>About the Creators</h2>
           <p style={styles.aboutText}>
-            VulnScraper is an open-source security tool created by a dedicated team of cybersecurity experts and full-stack developers passionate about industrial and enterprise cybersecurity. Built in Go for speed and concurrency, it automates OEM vulnerability monitoring, enabling organizations to strengthen defenses proactively.
+            VulnScraper is an open-source security tool developed by a team of Computer Engineering students specializing in cybersecurity and full-stack development from Vishwakarma Institute of Technology, Pune. Built in Go for speed and concurrency, it automates OEM vulnerability monitoring, enabling organizations to strengthen defenses proactively.
           </p>
         </section>
 
-        {/* Unified Contributors Section */}
         <Contributors />
 
         <section style={styles.aboutSection}>
@@ -170,41 +147,41 @@ const Homepage = () => {
           </ul>
         </section>
 
-        <section style={styles.aboutSection}>
+        <section style={styles.techTableWrapper}>
           <h2 style={styles.sectionTitle}>Technology Stack</h2>
           <table style={styles.techTable}>
             <thead>
               <tr>
-                <th>Layer</th>
-                <th>Technology</th>
-                <th>Purpose</th>
+                <th style={styles["techTable th"]}>Layer</th>
+                <th style={styles["techTable th"]}>Technology</th>
+                <th style={styles["techTable th"]}>Purpose</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Data Collection</td>
-                <td>Golang</td>
-                <td>High-speed, concurrent web scraping from multiple OEM sources</td>
+              <tr style={styles.techTableRow}>
+                <td style={styles["techTable td"]}>Data Collection</td>
+                <td style={styles["techTable td"]}>Golang</td>
+                <td style={styles["techTable td"]}>High-speed, concurrent web scraping from multiple OEM sources</td>
               </tr>
-              <tr>
-                <td>Backend API</td>
-                <td>Node.js with Express</td>
-                <td>RESTful APIs for data access and management</td>
+              <tr style={styles.techTableRow}>
+                <td style={styles["techTable td"]}>Backend API</td>
+                <td style={styles["techTable td"]}>Node.js with Express</td>
+                <td style={styles["techTable td"]}>RESTful APIs for data access and management</td>
               </tr>
-              <tr>
-                <td>Frontend UI</td>
-                <td>React.js</td>
-                <td>Interactive dashboards with real-time updates</td>
+              <tr style={styles.techTableRow}>
+                <td style={styles["techTable td"]}>Frontend UI</td>
+                <td style={styles["techTable td"]}>React.js</td>
+                <td style={styles["techTable td"]}>Interactive dashboards with real-time updates</td>
               </tr>
-              <tr>
-                <td>Database</td>
-                <td>MongoDB</td>
-                <td>Flexible NoSQL storage for vulnerabilities and advisories</td>
+              <tr style={styles.techTableRow}>
+                <td style={styles["techTable td"]}>Database</td>
+                <td style={styles["techTable td"]}>MongoDB</td>
+                <td style={styles["techTable td"]}>Flexible NoSQL storage for vulnerabilities and advisories</td>
               </tr>
-              <tr>
-                <td>Notification System</td>
-                <td>Twilio, Socket.IO</td>
-                <td>Email/SMS alerts and verified real-time notifications</td>
+              <tr style={styles.techTableRow}>
+                <td style={styles["techTable td"]}>Notification System</td>
+                <td style={styles["techTable td"]}>Twilio, Socket.IO</td>
+                <td style={styles["techTable td"]}>Email/SMS alerts and verified real-time notifications</td>
               </tr>
             </tbody>
           </table>
@@ -436,10 +413,40 @@ const styles = {
     borderTop: "1px solid #dde5ef",
     background: "#f5f7fa",
   },
+  techTableWrapper: {
+    background: "#e4f0fb",
+    borderRadius: "16px",
+    padding: "2rem",
+    margin: "2rem 0",
+    boxShadow: "0 2px 12px #61dafb22",
+    display: "block",
+    overflowX: "auto",
+  },
   techTable: {
     width: "100%",
     borderCollapse: "collapse",
-    marginTop: "1rem",
+    background: "transparent",
+  },
+  "techTable th": {
+    fontWeight: "700",
+    color: "#282c34",
+    fontSize: "1.09rem",
+    padding: "10px 8px",
+    borderBottom: "none",
+    background: "transparent",
+    textAlign: "left",
+  },
+  "techTable td": {
+    fontWeight: "400",
+    color: "#282c34",
+    fontSize: "1.03rem",
+    padding: "11px 8px",
+    borderBottom: "none",
+    background: "transparent",
+    textAlign: "left",
+  },
+  techTableRow: {
+    borderBottom: "1px solid #dde5ef"
   },
   contributorsSection: {
     marginTop: "5rem",
@@ -475,11 +482,7 @@ const styles = {
     fontSize: "1rem",
     marginBottom: "0.3rem",
     color: "#2778ac",
-  },
-  contributorRole: {
-    fontSize: "0.9rem",
-    color: "#426991",
-  },
+  }
 };
 
 export default Homepage;
