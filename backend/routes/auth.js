@@ -2,9 +2,12 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
 const OTP = require('../models/Otp');
 const nodemailer = require('nodemailer');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Nodemailer transporter config (Gmail)
 const transporter = nodemailer.createTransport({
@@ -22,8 +25,7 @@ router.post('/send-otp', async (req, res) => {
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-  // Save OTP with 3 min expiry
-  await OTP.findOneAndDelete({ email }); // clear previous OTPs for email
+  await OTP.findOneAndDelete({ email });
   await OTP.create({
     email,
     otp,
@@ -62,7 +64,7 @@ router.post('/verify-otp', async (req, res) => {
   res.json({ success: true, message: 'OTP verified' });
 });
 
-// Signup route (only after OTP verified)
+// Signup route
 router.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -77,7 +79,7 @@ router.post('/signup', async (req, res) => {
     const user = new User({ name, email, password: hashedPassword });
     await user.save();
 
-    await OTP.deleteOne({ email }); // remove OTP after signup success
+    await OTP.deleteOne({ email });
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
@@ -106,6 +108,39 @@ router.post('/login', async (req, res) => {
     res.json({ message: 'Login successful', token });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Google sign-up/login route
+router.post('/google-signup', async (req, res) => {
+  const { token } = req.body;
+  if (!token) return res.status(400).json({ error: 'Token is required' });
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const email = payload.email;
+    const name = payload.name;
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = new User({ name, email, password: '' }); // no password for Google OAuth users
+      await user.save();
+    }
+
+    const jwtToken = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+    );
+
+    res.json({ success: true, token: jwtToken });
+  } catch (err) {
+    console.error('Google OAuth error:', err);
+    res.status(401).json({ error: 'Invalid Google token' });
   }
 });
 
