@@ -1,0 +1,125 @@
+.signup-page-container {
+  min-height: 100vh;
+  background: #f7f8fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.signup-card {
+  background: #fff;
+  padding: 2.5rem 2.2rem;
+  border-radius: 16px;
+  box-shadow: 0px 6px 24px rgba(0,0,0,0.07);
+  width: 100%;
+  max-width: 410px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signup-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+}
+
+.signup-logo-icon {
+  font-size: 2.3rem;
+  color: #14779D;
+  margin-right: 0.65rem;
+}
+
+.app-name {
+  font-size: 1.33rem;
+  font-weight: 700;
+  color: #1c293b;
+  letter-spacing: 0.5px;
+}
+
+.form-title {
+  color: #1c293b;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.signup-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 1.0rem;
+}
+
+.signup-form input {
+  padding: 0.78rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #dce3ea;
+  border-radius: 8px;
+  background: #f7f8fa;
+  outline: none;
+}
+
+.signup-form input:focus {
+  border-color: #14779D;
+  background: #fff;
+}
+
+.signup-btn {
+  background: #18b6d6;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.22s;
+}
+
+.signup-btn:hover {
+  background: #14779D;
+}
+
+.signup-message {
+  margin-top: 1rem;
+  color: #d72e44;
+  font-weight: 600;
+  text-align: center;
+}
+
+.signup-login-link {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: #444;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.signup-link-btn {
+  background: none;
+  border: none;
+  color: #18b6d6;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.98rem;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.signup-link-btn:hover {
+  color: #14779D;
+}
+
+/* Responsive for small screens */
+@media (max-width: 540px) {
+  .signup-card {
+    padding: 1.5rem 1rem;
+  }
+}
