@@ -13,25 +13,30 @@ const Login = ({ onLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('http://localhost:5000/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
-    const data = await response.json();
-    if (response.ok && data.token) {
-      localStorage.setItem('token', data.token);
-      setMessage('Login successful!');
-      if (onLogin) onLogin(data.token);
-      navigate('/dashboard');
-    } else {
-      setMessage(data.error || 'Login failed.');
+    setMessage('');
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      if (response.ok && data.token) {
+        localStorage.setItem('token', data.token);
+        setMessage('Login successful!');
+        if (onLogin) onLogin(data.token);
+        navigate('/dashboard');
+      } else {
+        setMessage(data.error || 'Invalid email or password.');
+      }
+    } catch {
+      setMessage('Server error. Please try again later.');
     }
   };
 
-  // DEMO: Replace with real Google OAuth logic in actual app
   const handleGoogleLogin = () => {
     setGoogleLoading(true);
+    // Replace this with actual Google OAuth integration code
     setTimeout(() => {
       setGoogleLoading(false);
       setMessage("Logged in with Google (demo)");
@@ -71,8 +76,8 @@ const Login = ({ onLogin }) => {
           margin-bottom: 1.2rem;
         }
         .login-logo-icon {
-          font-size: 1.8rem; /* exact match sidebar/header */
-          color: #61dafb;   /* VulnScraper accent color */
+          font-size: 1.8rem;
+          color: #61dafb;
           margin-right: 0.55rem;
         }
         .app-name {
@@ -187,7 +192,7 @@ const Login = ({ onLogin }) => {
           </div>
 
           <h2>Sign in to your account</h2>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
             <input
               type="email"
               name="email"
@@ -208,6 +213,7 @@ const Login = ({ onLogin }) => {
             />
             <button type="submit">Login</button>
           </form>
+
           <button
             className="google-btn"
             type="button"
@@ -226,7 +232,9 @@ const Login = ({ onLogin }) => {
 
           <div className="login-switch-signup">
             Don't have an account?{" "}
-            <button type="button" onClick={() => navigate('/signup')}>Sign up</button>
+            <button type="button" onClick={() => navigate('/signup')}>
+              Sign up
+            </button>
           </div>
         </div>
       </div>
