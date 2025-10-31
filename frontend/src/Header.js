@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";  // <-- Import useNavigate
 
 export default function Header({ onLogout }) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef();
+  const navigate = useNavigate();  // <-- Initialize navigate
 
   const now = new Date().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' });
 
@@ -46,6 +48,16 @@ export default function Header({ onLogout }) {
           {open && (
             <div className="dropdown-menu">
               <button className="dropdown-item">User Profile</button>
+              {/* On click navigate to Homepage */}
+              <button
+                className="dropdown-item"
+                onClick={() => {
+                  navigate('/');  // Navigate to homepage
+                  setOpen(false);
+                }}
+              >
+                Homepage
+              </button>
               <button className="dropdown-item">Help</button>
               <button className="dropdown-item" onClick={onLogout}>Logout</button>
             </div>
