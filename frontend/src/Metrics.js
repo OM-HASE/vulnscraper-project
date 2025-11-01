@@ -42,7 +42,7 @@ export default function Metrics() {
         </span>
         <div className="metric-content">
           <div className="metric-number" id="criticalCount">{displayCount(metrics.criticalCount)}</div>
-          <div className="metric-label">Critical / High</div>
+          <div className="metric-label">Critical</div>
         </div>
       </div>
       <div className="metric-card active">
