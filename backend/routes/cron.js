@@ -3,16 +3,77 @@ const router = express.Router();
 const cron = require('node-cron');
 
 const Scheduler = require('../models/Scheduler');
+
+const { sleep, normalizeVulnerability, fetchVulnerabilities } = require('../utils/scrapper');
+
+const RESULTS_PER_PAGE = 500;
+const MAX_PAGES = 100;
+const SLEEP_MS = 2000;
+
 let scheduledCron = null;
 
 const run = async (cron) => {
+    if(cron.status === "running") {
+        console.log("Scraper is already running. Skipping this run.");
+        return;
+    }
     cron.status = "running";
     await cron.save();
-    console.log("Running scrapper....." + cron.cron);
+    await scrapper();
     cron.status = "completed";
     cron.completedAt = new Date();
     await cron.save();
 };
+
+async function scrapper() {
+
+  let totalUpserted = 0;
+  const allCurrentCVEs = new Set();
+
+  for (let page = 0; page < MAX_PAGES; page++) {
+    const startIndex = page * RESULTS_PER_PAGE;
+    console.log(`Fetching CVEs starting from index ${startIndex}...`);
+
+    const vulns = await fetchVulnerabilities(startIndex);
+
+    if (!vulns.length) {
+      console.log("No more data.");
+      break;
+    }
+
+    vulns.forEach((v) => {
+      if (v.cve && v.cve.id) allCurrentCVEs.add(v.cve.id);
+    });
+
+    const bulkOps = vulns.map((v) => {
+      const doc = normalizeVulnerability(v.cve);
+      return {
+        updateOne: {
+          filter: { cve: doc.cve },
+          update: { $set: doc },
+          upsert: true,
+        },
+      };
+    });
+
+    const result = await Scheduler.bulkWrite(bulkOps, { ordered: false });
+
+    totalUpserted += (result.upsertedCount || 0) + (result.modifiedCount || 0);
+
+    console.log(
+      `Upserted ${
+        (result.upsertedCount || 0) + (result.modifiedCount || 0)
+      } records (Total so far: ${totalUpserted}).`
+    );
+
+    if (page < MAX_PAGES - 1) {
+      console.log(`Sleeping ${SLEEP_MS / 1000}s to respect rate limits...`);
+      await sleep(SLEEP_MS);
+    }
+  }
+
+  console.log(`Done. Total upserted: ${totalUpserted}`);
+}
 
 router.get('/', async (req, res) => {
   try {

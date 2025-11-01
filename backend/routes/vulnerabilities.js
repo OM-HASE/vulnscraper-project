@@ -5,7 +5,6 @@ const auth = require('../middleware/auth');
 
 // Get all vulnerabilities or filter by query parameters (public)
 router.get('/', async (req, res) => {
-  console.log("####")
   try {
     const { severity, vendor } = req.query;
     const filter = {};

@@ -4,21 +4,14 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// --- Configuration ---
-const MONGO_URI = "mongodb+srv://admin:8Ijp0rInygD29tRi@vulnscraper.qijcpij.mongodb.net/?appName=vulnscraper";
-const DB_NAME = "test";
-const COLLECTION_NAME = "vulnerabilities";
 const NVD_API_KEY = "8048515c-25fb-4a14-9f3a-ee37e1cff765";
 const BASE_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0";
-const RESULTS_PER_PAGE = 500;
-const MAX_PAGES = 100;
-const SLEEP_MS = 500;
+const RESULTS_PER_PAGE = 5;
 
-// --- Helper to wait ---
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+export function sleep (ms) { return new Promise((resolve) => setTimeout(resolve, ms)); };
 
 // --- Estimate CVSS from severity label ---
-function estimateCvssFromSeverity(severity) {
+export function estimateCvssFromSeverity(severity) {
   switch (severity?.toLowerCase()) {
     case "critical":
       return 9.5;
@@ -34,7 +27,7 @@ function estimateCvssFromSeverity(severity) {
 }
 
 // --- Normalize vulnerability data ---
-function normalizeVulnerability(item) {
+export function normalizeVulnerability(item) {
   const cve = item.id || "Unknown";
   const descriptions = item.descriptions || [];
   const englishDesc =
@@ -140,7 +133,7 @@ function normalizeVulnerability(item) {
 }
 
 // --- Fetch NVD data ---
-async function fetchVulnerabilities(startIndex = 0) {
+export async function fetchVulnerabilities(startIndex = 0) {
   const now = new Date();
   const pubEndDate = now.toISOString().split("T")[0] + "T00:00:00.000";
   const pubStartDate =
@@ -163,66 +156,3 @@ async function fetchVulnerabilities(startIndex = 0) {
   const res = await axios.get(BASE_URL, { headers, params });
   return res.data.vulnerabilities || [];
 }
-
-// --- Main Function ---
-async function main() {
-  const client = new MongoClient(MONGO_URI);
-  await client.connect();
-  const db = client.db(DB_NAME);
-  const collection = db.collection(COLLECTION_NAME);
-
-  console.log("Connected to MongoDB.");
-
-  let totalUpserted = 0;
-  const allCurrentCVEs = new Set();
-
-  for (let page = 0; page < MAX_PAGES; page++) {
-    const startIndex = page * RESULTS_PER_PAGE;
-    console.log(`Fetching CVEs starting from index ${startIndex}...`);
-
-    const vulns = await fetchVulnerabilities(startIndex);
-
-    if (!vulns.length) {
-      console.log("No more data.");
-      break;
-    }
-
-    vulns.forEach((v) => {
-      if (v.cve && v.cve.id) allCurrentCVEs.add(v.cve.id);
-    });
-
-    const bulkOps = vulns.map((v) => {
-      const doc = normalizeVulnerability(v.cve);
-      return {
-        updateOne: {
-          filter: { cve: doc.cve },
-          update: { $set: doc },
-          upsert: true,
-        },
-      };
-    });
-
-    const result = await collection.bulkWrite(bulkOps, { ordered: false });
-
-    totalUpserted += (result.upsertedCount || 0) + (result.modifiedCount || 0);
-
-    console.log(
-      `Upserted ${
-        (result.upsertedCount || 0) + (result.modifiedCount || 0)
-      } records (Total so far: ${totalUpserted}).`
-    );
-
-    if (page < MAX_PAGES - 1) {
-      console.log(`Sleeping ${SLEEP_MS / 1000}s to respect rate limits...`);
-      await sleep(SLEEP_MS);
-    }
-  }
-
-  console.log(`Done. Total upserted: ${totalUpserted}`);
-  await client.close();
-}
-
-main().catch((err) => {
-  console.error("Error:", err.message);
-  process.exit(1);
-});
