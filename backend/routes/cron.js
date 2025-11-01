@@ -6,7 +6,10 @@ const Scheduler = require('../models/Scheduler');
 let scheduledCron = null;
 
 const run = async (cron) => {
+    cron.status = "running";
+    await cron.save();
     console.log("Running scrapper....." + cron.cron);
+    cron.status = "completed";
     cron.completedAt = new Date();
     await cron.save();
 };
@@ -45,7 +48,8 @@ async function insertDefaultCron() {
     if (!existing) {
         const defaultCron = new Scheduler({
           type: "scraper",
-          cron: "*/5 * * * * *",
+          status: "stopped",
+          cron: "*/5 * * * *",
           completedAt: new Date(),
         });
         await defaultCron.save();

@@ -337,7 +337,7 @@ export default function Settings() {
                   {cronConfig.map((option, index) => <option key={index} value={option.value}>{option.label}</option>)}
                 </select>
               </div>
-              <div className="form-group">
+              {/* <div className="form-group">
                 <label className="form-label">OEM Sources</label>
                 <div className="checkbox-group">
                   <label><input type="checkbox" defaultChecked /> Cisco</label>
@@ -346,7 +346,7 @@ export default function Settings() {
                   <label><input type="checkbox" /> Juniper</label>
                   <label><input type="checkbox" /> Honeywell</label>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -361,7 +361,7 @@ export default function Settings() {
               </div>
               <div className="status-item">
                 <span>Scraper Service</span>
-                <span className="status status--success">Running</span>
+                <span className="status status--success">{cron ? cron.status.charAt(0).toUpperCase() + cron.status.slice(1) : "Unknown"}</span>
               </div>
               <div className="status-item">
                 <span>API Service</span>
