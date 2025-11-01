@@ -7,8 +7,8 @@ const Scheduler = require('../models/Scheduler');
 const { sleep, normalizeVulnerability, fetchVulnerabilities } = require('../utils/scrapper');
 
 const RESULTS_PER_PAGE = 500;
-const MAX_PAGES = 100;
-const SLEEP_MS = 2000;
+const MAX_PAGES = 1000;
+const SLEEP_MS = 500;
 
 let scheduledCron = null;
 

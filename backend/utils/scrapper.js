@@ -6,7 +6,7 @@ dotenv.config();
 
 const NVD_API_KEY = "8048515c-25fb-4a14-9f3a-ee37e1cff765";
 const BASE_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0";
-const RESULTS_PER_PAGE = 5;
+const RESULTS_PER_PAGE = 500;
 
 export function sleep (ms) { return new Promise((resolve) => setTimeout(resolve, ms)); };
 
