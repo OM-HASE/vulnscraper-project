@@ -10,37 +10,108 @@ const DB_NAME = "test";
 const COLLECTION_NAME = "vulnerabilities";
 const NVD_API_KEY = "8048515c-25fb-4a14-9f3a-ee37e1cff765";
 const BASE_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0";
-const RESULTS_PER_PAGE = 500; // Max 200 per NVD docs
-const MAX_PAGES = 100; // You can increase this later for more data
-const SLEEP_MS = 500; // To respect API rate limits
+const RESULTS_PER_PAGE = 500;
+const MAX_PAGES = 100;
+const SLEEP_MS = 500;
 
 // --- Helper to wait ---
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// --- Function to normalize data into desired MongoDB format ---
+// --- Estimate CVSS from severity label ---
+function estimateCvssFromSeverity(severity) {
+  switch (severity?.toLowerCase()) {
+    case "critical":
+      return 9.5;
+    case "HIGH":
+      return 8.0;
+    case "MEDIUM":
+      return 5.0;
+    case "Low":
+      return 2.5;
+    default:
+      return 0;
+  }
+}
+
+// --- Normalize vulnerability data ---
 function normalizeVulnerability(item) {
   const cve = item.id || "Unknown";
   const descriptions = item.descriptions || [];
   const englishDesc =
-    descriptions.find((d) => d.lang === "en")?.value ||
-    "No description available";
+    descriptions.find((d) => d.lang === "en")?.value || "No description available";
 
   const title = englishDesc.substring(0, 120) + "...";
 
-  // Severity and CVSS
+  // Extract severity and CVSS
   let severity = "Unknown";
-  let cvss = 0;
+  let cvss = null;
+
   if (item.metrics) {
     const v3 = item.metrics.cvssMetricV31 || item.metrics.cvssMetricV30;
     const v2 = item.metrics.cvssMetricV2;
 
     if (v3 && v3.length > 0) {
       severity = v3[0].cvssData.baseSeverity || "Unknown";
-      cvss = v3[0].cvssData.baseScore || 0;
+      cvss = v3[0].cvssData.baseScore;
     } else if (v2 && v2.length > 0) {
       severity = v2[0].baseSeverity || "Unknown";
-      cvss = v2[0].cvssData?.baseScore || 0;
+      cvss = v2[0].cvssData?.baseScore;
     }
+  }
+
+  // --- Normalize CVSS and Severity ---
+  if (typeof cvss === "string" && cvss.toUpperCase() === "N/A") {
+    cvss = null;
+  }
+  if (isNaN(Number(cvss))) {
+    cvss = null;
+  }
+
+  // If CVSS missing, estimate from severity
+  if (!cvss || cvss === 0) {
+    cvss = estimateCvssFromSeverity(severity);
+  }
+
+  // If severity unknown, derive it from CVSS
+  if (severity === "Unknown" || severity === "N/A") {
+    if (cvss >= 9.0) severity = "Critical";
+    else if (cvss >= 7.0) severity = "High";
+    else if (cvss >= 4.0) severity = "Medium";
+    else severity = "Low";
+  }
+
+  // If both missing or invalid, assign random CVSS (1–6) and set severity
+  if ((!cvss || cvss === 0) && (severity === "Unknown" || severity === "N/A")) {
+    cvss = Math.random() * 5 + 1; // random between 1.0 and 6.0
+    if (cvss >= 4.0) severity = "Medium";
+    else severity = "Low";
+  }
+
+  // --- Determine status dynamically ---
+  let status = "Active";
+  const desc = englishDesc.toLowerCase();
+
+  if (desc.includes("awaiting analysis")) {
+    status = "Awaiting Analysis";
+  } else if (
+    desc.includes("mitigated") ||
+    desc.includes("resolved") ||
+    desc.includes("fixed")
+  ) {
+    status = "Mitigated";
+  } else if (
+    desc.includes("under investigation") ||
+    desc.includes("investigating")
+  ) {
+    status = "Under Investigation";
+  } else if (desc.includes("rejected") || desc.includes("not applicable")) {
+    status = "Rejected";
+  } else if (
+    desc.includes("deprecated") ||
+    desc.includes("retired") ||
+    desc.includes("obsolete")
+  ) {
+    status = "Deprecated";
   }
 
   // References
@@ -50,25 +121,21 @@ function normalizeVulnerability(item) {
     [];
 
   // Published / Updated dates
-  const published = item.published
-    ? new Date(item.published)
-    : new Date();
-  const updated = item.lastModified
-    ? new Date(item.lastModified)
-    : new Date();
+  const published = item.published ? new Date(item.published) : new Date();
+  const updated = item.lastModified ? new Date(item.lastModified) : new Date();
 
   return {
     cve,
     title,
     description: englishDesc,
     severity,
-    cvss,
+    cvss: Number(cvss.toFixed(1)), // rounded to 1 decimal place
     published,
     updated,
     createdAt: published,
     references: refs,
     tags: ["NVD"],
-    status: "Analyzed",
+    status,
   };
 }
 
@@ -82,15 +149,15 @@ async function fetchVulnerabilities(startIndex = 0) {
       .split("T")[0] + "T00:00:00.000";
 
   const headers = {
-    "User-Agent": "nvd-mongo-sample/1.0 (sample@example.com)",
+    "User-Agent": "vulnscraper/1.0 (sample@example.com)",
   };
   if (NVD_API_KEY) headers["apiKey"] = NVD_API_KEY;
 
   const params = {
     startIndex,
     resultsPerPage: RESULTS_PER_PAGE,
-    pubStartDate: pubStartDate,
-    pubEndDate: pubEndDate,
+    pubStartDate,
+    pubEndDate,
   };
 
   const res = await axios.get(BASE_URL, { headers, params });
@@ -120,12 +187,10 @@ async function main() {
       break;
     }
 
-    // Track all CVEs from current fetch to later delete obsolete ones if desired
     vulns.forEach((v) => {
       if (v.cve && v.cve.id) allCurrentCVEs.add(v.cve.id);
     });
 
-    // Prepare bulk operations for upsert to insert or update accordingly
     const bulkOps = vulns.map((v) => {
       const doc = normalizeVulnerability(v.cve);
       return {
@@ -153,15 +218,7 @@ async function main() {
     }
   }
 
-  // Optional clean-up: Delete vulnerabilities that are not in current fetch
-  // Uncomment below block if you want to remove outdated entries
-  /*
-  const currentCVEsArray = Array.from(allCurrentCVEs);
-  const deleteResult = await collection.deleteMany({ cve: { $nin: currentCVEsArray } });
-  console.log(`Deleted ${deleteResult.deletedCount} outdated records.`);
-  */
-
-  console.log(`✅ Done. Total upserted: ${totalUpserted}`);
+  console.log(`Done. Total upserted: ${totalUpserted}`);
   await client.close();
 }
 
