@@ -10,9 +10,9 @@ const DB_NAME = "test";
 const COLLECTION_NAME = "vulnerabilities";
 const NVD_API_KEY = "8048515c-25fb-4a14-9f3a-ee37e1cff765";
 const BASE_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0";
-const RESULTS_PER_PAGE = 50; // Max 200 per NVD docs
-const MAX_PAGES = 100; // for demo, you can increase later
-const SLEEP_MS = 6000; // rate limit compliance
+const RESULTS_PER_PAGE = 500; // Max 200 per NVD docs
+const MAX_PAGES = 100; // You can increase this later for more data
+const SLEEP_MS = 500; // To respect API rate limits
 
 // --- Helper to wait ---
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -43,28 +43,6 @@ function normalizeVulnerability(item) {
     }
   }
 
-  // Vendors / Products
-  // let vendor = "Unknown";
-  // let product = "Various";
-  // let version = "";
-
-  // try {
-  //   const vendorData =
-  //     item.vulnerabilities?.[0]?.cve?.vendorData ||
-  //     item.configurations?.[0]?.nodes?.[0]?.cpeMatch ||
-  //     [];
-  //   if (vendorData.length > 0) {
-  //     vendor = vendorData[0].vendorName || "Unknown";
-  //     const products = vendorData[0].product || [];
-  //     if (products.length > 0) {
-  //       product = products[0].productName || "Various";
-  //       version = products[0].version?.[0]?.versionValue || "";
-  //     }
-  //   }
-  // } catch {
-  //   // default already assigned
-  // }
-
   // References
   const refs =
     item.references?.map((r) => r.url).filter(Boolean) ||
@@ -85,10 +63,8 @@ function normalizeVulnerability(item) {
     description: englishDesc,
     severity,
     cvss,
-    // vendor,
-    // product,
-    // version,
     published,
+    updated,
     createdAt: published,
     references: refs,
     tags: ["NVD"],
@@ -99,8 +75,11 @@ function normalizeVulnerability(item) {
 // --- Fetch NVD data ---
 async function fetchVulnerabilities(startIndex = 0) {
   const now = new Date();
-  const pubEndDate = now.toISOString().split('T')[0] + "T00:00:00.000";
-  const pubStartDate = new Date(now.getTime() - 100 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] + "T00:00:00.000";
+  const pubEndDate = now.toISOString().split("T")[0] + "T00:00:00.000";
+  const pubStartDate =
+    new Date(now.getTime() - 100 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0] + "T00:00:00.000";
 
   const headers = {
     "User-Agent": "nvd-mongo-sample/1.0 (sample@example.com)",
@@ -118,7 +97,6 @@ async function fetchVulnerabilities(startIndex = 0) {
   return res.data.vulnerabilities || [];
 }
 
-
 // --- Main Function ---
 async function main() {
   const client = new MongoClient(MONGO_URI);
@@ -128,7 +106,8 @@ async function main() {
 
   console.log("Connected to MongoDB.");
 
-  let totalInserted = 0;
+  let totalUpserted = 0;
+  const allCurrentCVEs = new Set();
 
   for (let page = 0; page < MAX_PAGES; page++) {
     const startIndex = page * RESULTS_PER_PAGE;
@@ -141,12 +120,31 @@ async function main() {
       break;
     }
 
-    const docs = vulns.map((v) => normalizeVulnerability(v.cve));
-    const result = await collection.insertMany(docs, { ordered: false });
-    totalInserted += result.insertedCount;
+    // Track all CVEs from current fetch to later delete obsolete ones if desired
+    vulns.forEach((v) => {
+      if (v.cve && v.cve.id) allCurrentCVEs.add(v.cve.id);
+    });
+
+    // Prepare bulk operations for upsert to insert or update accordingly
+    const bulkOps = vulns.map((v) => {
+      const doc = normalizeVulnerability(v.cve);
+      return {
+        updateOne: {
+          filter: { cve: doc.cve },
+          update: { $set: doc },
+          upsert: true,
+        },
+      };
+    });
+
+    const result = await collection.bulkWrite(bulkOps, { ordered: false });
+
+    totalUpserted += (result.upsertedCount || 0) + (result.modifiedCount || 0);
 
     console.log(
-      `Inserted ${result.insertedCount} records (Total: ${totalInserted}).`
+      `Upserted ${
+        (result.upsertedCount || 0) + (result.modifiedCount || 0)
+      } records (Total so far: ${totalUpserted}).`
     );
 
     if (page < MAX_PAGES - 1) {
@@ -155,7 +153,15 @@ async function main() {
     }
   }
 
-  console.log(`✅ Done. Total inserted: ${totalInserted}`);
+  // Optional clean-up: Delete vulnerabilities that are not in current fetch
+  // Uncomment below block if you want to remove outdated entries
+  /*
+  const currentCVEsArray = Array.from(allCurrentCVEs);
+  const deleteResult = await collection.deleteMany({ cve: { $nin: currentCVEsArray } });
+  console.log(`Deleted ${deleteResult.deletedCount} outdated records.`);
+  */
+
+  console.log(`✅ Done. Total upserted: ${totalUpserted}`);
   await client.close();
 }
 
