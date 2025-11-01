@@ -9,6 +9,7 @@ require('dotenv').config();
 
 // Import routes
 const vulnerabilityRoutes = require('./routes/vulnerabilities');
+const cronRoutes = require('./routes/cron');
 const authRoutes = require('./routes/auth');
 const alertService = require('./utils/alerts');
 
@@ -65,6 +66,7 @@ app.set('io', io);
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/vulnerabilities', vulnerabilityRoutes);
+app.use('/api/cron', cronRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

@@ -1,6 +1,25 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import moment from "moment";
+import { cronConfig } from "./config/cron";
 
 export default function Settings() {
+
+  const [cron, setCron] = useState(null);
+
+  useEffect(() => {
+    const fetchCron = async () => {
+      const response = await axios.get("/api/cron");
+      setCron(response.data[0]);
+    }
+    fetchCron();
+  }, []);
+
+  const updateCronSchedule = async (e) => {
+    const response = await axios.put("/api/cron", { cron: e.target.value });
+    setCron(response.data);
+  };
+
   return (
     <>
       <style>{`
@@ -314,19 +333,8 @@ export default function Settings() {
             <div className="card__body">
               <div className="form-group">
                 <label className="form-label">Scrape Frequency</label>
-                <select className="form-control">
-                  <option>Every 1 minutes</option>
-                  <option>Every 2 minutes</option>
-                  <option>Every 3 minutes</option>
-                  <option>Every 4 minutes</option>
-                  <option>Every 5 minutes</option>
-                  <option>Every 10 minutes</option>
-                  <option>Every 15 minutes</option>
-                  <option>Every 30 minutes</option>
-                  <option>Every 1 Hour</option>
-                  <option>Every 2 Hour</option>
-                  <option>Every 3 Hour</option>
-                  <option>Daily</option>
+                <select className="form-control" onChange={updateCronSchedule} value={cron ? cron.cron : "0 0 * * *"}>
+                  {cronConfig.map((option, index) => <option key={index} value={option.value}>{option.label}</option>)}
                 </select>
               </div>
               <div className="form-group">
@@ -361,7 +369,7 @@ export default function Settings() {
               </div>
               <div className="status-item">
                 <span>Last Scan</span>
-                <span>2 minutes ago</span>
+                <span>{cron ? moment(cron.completedAt).fromNow() : "Unknown"}</span>
               </div>
             </div>
           </div>
