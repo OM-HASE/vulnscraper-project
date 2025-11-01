@@ -29,7 +29,7 @@ function VulnerabilitiesTable({ vulnerabilities, onViewDetails }) {
           <tr>
             <th onClick={() => { setSortField("cve");setSortDirection(d=>d==="asc"?"desc":"asc"); }}>CVE</th>
             <th>Title</th>
-            <th onClick={() => { setSortField("vendor");setSortDirection(d=>d==="asc"?"desc":"asc"); }}>Vendor</th>
+            {/* <th onClick={() => { setSortField("vendor");setSortDirection(d=>d==="asc"?"desc":"asc"); }}>Vendor</th> */}
             <th>Severity</th>
             <th onClick={() => { setSortField("cvss");setSortDirection(d=>d==="asc"?"desc":"asc"); }}>CVSS</th>
             <th>Status</th>
@@ -42,7 +42,7 @@ function VulnerabilitiesTable({ vulnerabilities, onViewDetails }) {
             <tr key={vuln.id}>
               <td>{vuln.cve}</td>
               <td>{vuln.title.slice(0,40)}{vuln.title.length>40?'...':""}</td>
-              <td>{vuln.vendor}</td>
+              {/* <td>{vuln.vendor}</td> */}
               <td>{vuln.severity}</td>
               <td>{vuln.cvss}</td>
               <td>{vuln.status}</td>

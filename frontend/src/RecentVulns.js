@@ -54,7 +54,7 @@ export default function RecentVulns() {
                 <tr>
                   <th>CVE</th>
                   <th>Title</th>
-                  <th>Vendor</th>
+                  {/* <th>Vendor</th> */}
                   <th>Severity</th>
                   <th>CVSS</th>
                   <th>Status</th>
@@ -67,7 +67,7 @@ export default function RecentVulns() {
                   <tr key={v._id}>
                     <td>{v.cve}</td>
                     <td>{v.title}</td>
-                    <td>{v.vendor || 'N/A'}</td>
+                    {/* <td>{v.vendor || 'N/A'}</td> */}
                     <td><span className={pillClass(v.severity)}>{v.severity}</span></td>
                     <td><b>{v.cvss || 'N/A'}</b></td>
                     <td><span className={pillClass(v.status)}>{v.status}</span></td>

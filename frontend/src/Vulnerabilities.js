@@ -8,7 +8,7 @@ export default function Vulnerabilities() {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [severityFilter, setSeverityFilter] = useState("");
-  const [vendorFilter, setVendorFilter] = useState("");
+  // const [vendorFilter, setVendorFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [selectedVuln, setSelectedVuln] = useState(null);
 
@@ -35,9 +35,9 @@ export default function Vulnerabilities() {
                          vuln.cve.toLowerCase().includes(search.toLowerCase()) ||
                          (vuln.description && vuln.description.toLowerCase().includes(search.toLowerCase()));
     const matchesSeverity = !severityFilter || vuln.severity === severityFilter;
-    const matchesVendor = !vendorFilter || vuln.vendor === vendorFilter;
+    // const matchesVendor = !vendorFilter || vuln.vendor === vendorFilter;
     const matchesStatus = !statusFilter || vuln.status === statusFilter;
-    return matchesSearch && matchesSeverity && matchesVendor && matchesStatus;
+    return matchesSearch && matchesSeverity && matchesStatus;
   });
 
   const handleViewDetails = (vuln) => {
@@ -369,7 +369,7 @@ export default function Vulnerabilities() {
               <option value="Medium">Medium</option>
               <option value="Low">Low</option>
             </select>
-            <select
+            {/* <select
               className="form-control"
               value={vendorFilter}
               onChange={(e) => setVendorFilter(e.target.value)}
@@ -380,7 +380,7 @@ export default function Vulnerabilities() {
               <option value="VMware">VMware</option>
               <option value="Juniper">Juniper</option>
               <option value="Honeywell">Honeywell</option>
-            </select>
+            </select> */}
             <select
               className="form-control"
               value={statusFilter}
@@ -410,7 +410,7 @@ export default function Vulnerabilities() {
                       </th>
                       <th>CVE</th>
                       <th>Title</th>
-                      <th>Vendor</th>
+                      {/* <th>Vendor</th> */}
                       <th>Severity</th>
                       <th>CVSS</th>
                       <th>Status</th>
@@ -426,7 +426,7 @@ export default function Vulnerabilities() {
                         </td>
                         <td>{vuln.cve}</td>
                         <td>{vuln.title}</td>
-                        <td>{vuln.vendor || "N/A"}</td>
+                        {/* <td>{vuln.vendor || "N/A"}</td> */}
                         <td>{vuln.severity || "N/A"}</td>
                         <td>{vuln.cvss || "N/A"}</td>
                         <td>{vuln.status}</td>

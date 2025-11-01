@@ -435,7 +435,7 @@ export default function Reports() {
                 <select className="form-control">
                   <option value="summary">Executive Summary</option>
                   <option value="detailed">Detailed Vulnerability Report</option>
-                  <option value="vendor">Vendor Analysis Report</option>
+                  {/* <option value="vendor">Vendor Analysis Report</option> */}
                   <option value="trends">Trend Analysis Report</option>
                 </select>
               </div>
@@ -507,10 +507,10 @@ export default function Reports() {
                 </button>
                 <button className="quick-report-btn">
                   <i className="fas fa-building"></i>
-                  <div>
+                  {/* <div>
                     <div className="report-title">Vendor Summary</div>
                     <div className="report-subtitle">Vulnerabilities by vendor</div>
-                  </div>
+                  </div> */}
                 </button>
                 <button className="quick-report-btn">
                   <i className="fas fa-calendar-alt"></i>
@@ -557,7 +557,7 @@ export default function Reports() {
                 </div>
                 <div className="report-history-item">
                   <div className="report-info">
-                    <div className="report-name">Vendor Analysis - Q3 2024</div>
+                    {/* <div className="report-name">Vendor Analysis - Q3 2024</div> */}
                     <div className="report-details">
                       Generated on Oct 1, 2024 • PDF • 1.8 MB
                     </div>

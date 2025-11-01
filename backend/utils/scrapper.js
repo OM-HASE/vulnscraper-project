@@ -5,8 +5,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // --- Configuration ---
-const MONGO_URI = "mongodb://localhost:27017";
-const DB_NAME = "vulnscraper";
+const MONGO_URI = "mongodb+srv://admin:8Ijp0rInygD29tRi@vulnscraper.qijcpij.mongodb.net/?appName=vulnscraper";
+const DB_NAME = "test";
 const COLLECTION_NAME = "vulnerabilities";
 const NVD_API_KEY = "8048515c-25fb-4a14-9f3a-ee37e1cff765";
 const BASE_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0";
@@ -44,26 +44,26 @@ function normalizeVulnerability(item) {
   }
 
   // Vendors / Products
-  let vendor = "Unknown";
-  let product = "Various";
-  let version = "";
+  // let vendor = "Unknown";
+  // let product = "Various";
+  // let version = "";
 
-  try {
-    const vendorData =
-      item.vulnerabilities?.[0]?.cve?.vendorData ||
-      item.configurations?.[0]?.nodes?.[0]?.cpeMatch ||
-      [];
-    if (vendorData.length > 0) {
-      vendor = vendorData[0].vendorName || "Unknown";
-      const products = vendorData[0].product || [];
-      if (products.length > 0) {
-        product = products[0].productName || "Various";
-        version = products[0].version?.[0]?.versionValue || "";
-      }
-    }
-  } catch {
-    // default already assigned
-  }
+  // try {
+  //   const vendorData =
+  //     item.vulnerabilities?.[0]?.cve?.vendorData ||
+  //     item.configurations?.[0]?.nodes?.[0]?.cpeMatch ||
+  //     [];
+  //   if (vendorData.length > 0) {
+  //     vendor = vendorData[0].vendorName || "Unknown";
+  //     const products = vendorData[0].product || [];
+  //     if (products.length > 0) {
+  //       product = products[0].productName || "Various";
+  //       version = products[0].version?.[0]?.versionValue || "";
+  //     }
+  //   }
+  // } catch {
+  //   // default already assigned
+  // }
 
   // References
   const refs =
@@ -85,9 +85,9 @@ function normalizeVulnerability(item) {
     description: englishDesc,
     severity,
     cvss,
-    vendor,
-    product,
-    version,
+    // vendor,
+    // product,
+    // version,
     published,
     createdAt: published,
     references: refs,
