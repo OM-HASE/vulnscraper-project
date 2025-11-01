@@ -111,7 +111,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Google sign-up/login route
+// Google sign-up/login route with status field
 router.post('/google-signup', async (req, res) => {
   const { token } = req.body;
   if (!token) return res.status(400).json({ error: 'Token is required' });
@@ -126,9 +126,13 @@ router.post('/google-signup', async (req, res) => {
     const name = payload.name;
 
     let user = await User.findOne({ email });
+    let status = 'signup';
     if (!user) {
-      user = new User({ name, email, password: '' }); // no password for Google OAuth users
+      user = new User({ name, email, password: '' });
       await user.save();
+      status = 'signup';
+    } else {
+      status = 'signin';
     }
 
     const jwtToken = jwt.sign(
@@ -137,7 +141,7 @@ router.post('/google-signup', async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
 
-    res.json({ success: true, token: jwtToken });
+    res.json({ success: true, token: jwtToken, status });
   } catch (err) {
     console.error('Google OAuth error:', err);
     res.status(401).json({ error: 'Invalid Google token' });

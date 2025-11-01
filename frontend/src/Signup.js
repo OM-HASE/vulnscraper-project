@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // Use default import
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +14,7 @@ const Signup = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showContinue, setShowContinue] = useState(false); // new
 
   const navigate = useNavigate();
 
@@ -21,7 +22,6 @@ const Signup = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Send OTP to email
   const handleSendOTP = async () => {
     if (!formData.email) {
       setMessage("Please enter your email to send OTP.");
@@ -47,7 +47,6 @@ const Signup = () => {
     setLoading(false);
   };
 
-  // Verify OTP input
   const handleVerifyOTP = async () => {
     if (!otp) {
       setMessage("Please enter the OTP you received.");
@@ -73,7 +72,6 @@ const Signup = () => {
     setLoading(false);
   };
 
-  // Final submit for signup after OTP verified
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!otpVerified) {
@@ -89,7 +87,7 @@ const Signup = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        setMessage("Signup successful! Redirecting to login...");
+        setMessage("Signup successful! Redirecting to sign in...");
         setTimeout(() => navigate("/login"), 2000);
       } else {
         setMessage(data.error || "Signup failed.");
@@ -101,8 +99,10 @@ const Signup = () => {
   };
 
   const handleGoogleSuccess = (credentialResponse) => {
-    const decoded = jwtDecode(credentialResponse.credential);
-    console.log('Google User:', decoded);
+    try {
+      const decoded = jwtDecode(credentialResponse.credential);
+      console.log('Google User:', decoded);
+    } catch (e) {}
 
     fetch('http://localhost:5000/api/auth/google-signup', {
       method: 'POST',
@@ -112,26 +112,38 @@ const Signup = () => {
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          setMessage('Signed up with Google!');
-          setTimeout(() => navigate('/dashboard'), 1000);
+          if (data.status === 'signup') {
+            setMessage('Signed up with Google!');
+            console.log('Message set:', 'Signed up with Google!');
+          } else if (data.status === 'signin') {
+            setMessage('Account already exists. Signed in with Google!');
+            console.log('Message set:', 'Signed up with Google!123');
+          }
+          setShowContinue(true); // show button after success
         } else {
-          setMessage(data.error || 'Google signup failed.');
+          setMessage(data.error || 'Google sign up failed.');
+          setShowContinue(false);
         }
       })
-      .catch(() => setMessage('Google signup failed.'));
+      .catch(() => {
+        setMessage('Google sign up failed.');
+        setShowContinue(false);
+      });
   };
 
   const handleGoogleError = () => {
-    setMessage('Google login failed. Try again.');
+    setMessage('Google sign up failed. Try again.');
+    setShowContinue(false);
   };
 
   return (
     <>
       <style>{`
+        /* Entire styles block from your existing code */
         body {
           background-color: #f5f7fa;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-            Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+          Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
         }
         .signup-page-container {
           min-height: 100vh;
@@ -242,6 +254,24 @@ const Signup = () => {
           min-height: 1.2rem;
           user-select: none;
         }
+        .divider-or {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          margin: 18px 0 10px 0;
+        }
+        .divider-or-line {
+          flex: 1;
+          height: 1px;
+          background: #e4f0fb;
+        }
+        .divider-or-text {
+          margin: 0 12px;
+          color: #a2aabf;
+          font-weight: 700;
+          font-size: 1rem;
+          letter-spacing: 0.2px;
+        }
         .signup-login-link {
           margin-top: 1.1rem;
           text-align: center;
@@ -266,10 +296,9 @@ const Signup = () => {
         .signup-link-btn:hover {
           color: #21a1f1;
         }
-        /* Google Login button container adjustments */
         .google-login-button {
           width: 100%;
-          margin: 1.1rem 0 0 0;
+          margin: 0 0 0 0;
           display: flex;
           justify-content: center;
         }
@@ -281,7 +310,7 @@ const Signup = () => {
             <i className="fas fa-shield-virus signup-logo-icon" aria-hidden="true"></i>
             <span className="app-name">VulnScraper</span>
           </div>
-          <h2 className="form-title">Sign Up</h2>
+          <h2 className="form-title">Sign up</h2>
           <form className="signup-form" onSubmit={handleSubmit} noValidate>
             <input
               type="text"
@@ -305,7 +334,6 @@ const Signup = () => {
               aria-label="Email Address"
               disabled={otpSent}
             />
-
             {!otpSent && (
               <button
                 type="button"
@@ -317,7 +345,6 @@ const Signup = () => {
                 {loading ? "Sending OTP..." : "Send OTP"}
               </button>
             )}
-
             {otpSent && !otpVerified && (
               <>
                 <input
@@ -341,7 +368,6 @@ const Signup = () => {
                 </button>
               </>
             )}
-
             {otpVerified && (
               <>
                 <input
@@ -368,16 +394,34 @@ const Signup = () => {
             )}
           </form>
 
+          {/* Divider */}
+          <div className="divider-or">
+            <div className="divider-or-line"></div>
+            <span className="divider-or-text">or</span>
+            <div className="divider-or-line"></div>
+          </div>
+
           <div className="google-login-button" aria-label="Sign up with Google">
-            <GoogleLogin 
-              onSuccess={handleGoogleSuccess} 
-              onError={handleGoogleError} 
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              text="signup_with"
             />
           </div>
 
           <div role="alert" className="signup-message" aria-live="polite">
             {message}
           </div>
+
+          {showContinue && (
+            <button
+              className="signup-btn"
+              style={{ marginTop: '10px' }}
+              onClick={() => navigate('/dashboard')}
+            >
+              Continue
+            </button>
+          )}
 
           <div className="signup-login-link">
             Already have an account?
@@ -387,7 +431,7 @@ const Signup = () => {
               onClick={() => navigate("/login")}
               aria-label="Navigate to Sign in page"
             >
-              login
+              Sign in
             </button>
           </div>
         </div>
