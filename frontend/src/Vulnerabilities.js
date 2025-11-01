@@ -129,7 +129,7 @@ export default function Vulnerabilities() {
         }
 
         .filters-section {
-          max-width: 1200px;
+          max-width: 1400px;
           margin: 1.5rem auto;
           padding: 0 1rem;
         }

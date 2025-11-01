@@ -98,6 +98,10 @@ function normalizeVulnerability(item) {
 
 // --- Fetch NVD data ---
 async function fetchVulnerabilities(startIndex = 0) {
+  const now = new Date();
+  const pubEndDate = now.toISOString().split('T')[0] + "T00:00:00.000";
+  const pubStartDate = new Date(now.getTime() - 100 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] + "T00:00:00.000";
+
   const headers = {
     "User-Agent": "nvd-mongo-sample/1.0 (sample@example.com)",
   };
@@ -106,13 +110,14 @@ async function fetchVulnerabilities(startIndex = 0) {
   const params = {
     startIndex,
     resultsPerPage: RESULTS_PER_PAGE,
-    pubStartDate: '2025-07-01T00:00:00.000',
-    pubEndDate: '2025-10-29T00:00:00.000',
+    pubStartDate: pubStartDate,
+    pubEndDate: pubEndDate,
   };
 
   const res = await axios.get(BASE_URL, { headers, params });
   return res.data.vulnerabilities || [];
 }
+
 
 // --- Main Function ---
 async function main() {
