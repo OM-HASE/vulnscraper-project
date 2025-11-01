@@ -111,7 +111,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Google sign-up/login route with status field
+// Google sign-up/login route with status field (handles both sign-up and sign-in)
 router.post('/google-signup', async (req, res) => {
   const { token } = req.body;
   if (!token) return res.status(400).json({ error: 'Token is required' });
@@ -142,6 +142,37 @@ router.post('/google-signup', async (req, res) => {
     );
 
     res.json({ success: true, token: jwtToken, status });
+  } catch (err) {
+    console.error('Google OAuth error:', err);
+    res.status(401).json({ error: 'Invalid Google token' });
+  }
+});
+
+// Dedicated Google sign-in route (only signs in existing users)
+router.post('/google-signin', async (req, res) => {
+  const { token } = req.body;
+  if (!token) return res.status(400).json({ error: 'Token is required' });
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const email = payload.email;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ error: 'User not found, please sign up first' });
+    }
+
+    const jwtToken = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+    );
+
+    res.json({ success: true, token: jwtToken, status: 'signin' });
   } catch (err) {
     console.error('Google OAuth error:', err);
     res.status(401).json({ error: 'Invalid Google token' });

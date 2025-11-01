@@ -176,7 +176,7 @@ const Login = ({ onLogin }) => {
         }
         .google-login-button {
           width: 100%;
-          margin: 1rem 0 0 0;
+          margin: 0.1rem 0 0 0;
           display: flex;
           justify-content: center;
         }
@@ -239,7 +239,7 @@ const Login = ({ onLogin }) => {
             <i className="fas fa-shield-virus login-logo-icon" aria-hidden="true"></i>
             <span className="app-name">VulnScraper</span>
           </div>
-          <h2 className="form-title">Sign in to your account</h2>
+          <h2 className="form-title">Sign in</h2>
 
           <form onSubmit={handleSubmit} noValidate>
             <input

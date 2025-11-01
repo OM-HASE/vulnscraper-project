@@ -416,8 +416,8 @@ const Signup = () => {
           {showContinue && (
             <button
               className="signup-btn"
-              style={{ marginTop: '10px' }}
-              onClick={() => navigate('/dashboard')}
+              style={{ marginTop: '10px', padding: '0.5rem 1rem', fontSize: '0.9rem', width: 'auto' }}
+              onClick={() => navigate('/login')}
             >
               Continue
             </button>
